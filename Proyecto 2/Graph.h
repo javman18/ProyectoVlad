@@ -40,7 +40,7 @@ public:
     void setVisitedFalse(Queue<GNode*> qV);
     void deleteNode(T parent, T data);
     void iterativeDFS(T data);
-    bool limitedDFS(T data, int depth);
+    
     //int intersect(bool a, bool b);
     bool biderectionalBFS(T data1, T data2);
     void start();
@@ -110,6 +110,44 @@ public:
             }
         }
         setVisitedFalse(qVisited);
+        return nullptr;
+    }
+    GNode* limitedDFS(T data, int depth) {
+        root->visited = true;
+        Stack<GNode*> s;
+        s.push(root);
+        Queue<GNode*> qVisited;
+
+        //float depth = 0;
+        //float limit = 2;
+        GNode* tmp = s.front();
+        while (s.getSize() > 0) {
+            if (depth == 0) {
+
+                //cout << tmp->data << endl;
+                if (tmp->data == data) {
+                    setVisitedFalse(qVisited);
+                    cout << "se encontro" << endl;
+                    cout << depth << endl;
+                    return tmp;
+                    //break;
+                }
+                else {
+                    return nullptr;
+                }
+            }
+            else if (depth >= 0) {
+                cout << "si entro" << endl;
+                for (int i = 0; i < tmp->children.size(); i++) {
+
+                    limitedDFS(data, depth - 1);
+
+                }
+
+                tmp = s.front();
+            }
+
+        }
         return nullptr;
     }
 };
@@ -242,54 +280,6 @@ void Graph<T>::iterativeDFS(T data) {
     //return nullptr;
 }
 
-template<class T>
-bool Graph<T>::limitedDFS(T data, int depth) {
-    root->visited = true;
-    Stack<GNode*> s;
-    s.push(root);
-    Queue<GNode*> qVisited;
-    
-    //float depth = 0;
-    //float limit = 2;
-    GNode* tmp = s.front();
-    while (s.getSize()>0) {
-        if (depth >= 0) {
-            
-            //cout << tmp->data << endl;
-            if (tmp->data == data) {
-                setVisitedFalse(qVisited);
-                cout << "se encontro" << endl;
-                cout << depth << endl;
-                return true;
-                //break;
-            }
-            else {
-                s.pop();
-                for (int i = 0; i < tmp->children.size(); i++) {
-                    if (!tmp->children[i]->visited) {
-                        tmp->children[i]->visited = true;
-                        s.push(tmp->children[i]);
-                        qVisited.push(tmp->children[i]);
-                        
-                    }
-                    limitedDFS(data, depth-1);
-                    
-                }
-                
-                tmp = s.front();
-            }
-            
-        }
-        else {
-            //cout << depth << endl;
-            cout << "no se encontro" << endl;
-            return false;
-        }
-            
-    }
-    setVisitedFalse(qVisited);
-    return false;
-}
 
  template <class T>
  bool Graph<T>::biderectionalBFS(T data1, T data2) {
@@ -387,6 +377,7 @@ void Graph<T>::start() {
     else {
         cout << "nohay\n";
     }*/
+    limitedDFS(4, 4);
     print();
     
     //limitedDFS(7, 3);
