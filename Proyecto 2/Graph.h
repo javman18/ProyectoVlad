@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include "VectorJ.h"
 #include "Queue.h"
@@ -306,6 +307,7 @@ bool Graph<T>::limitedDFS(T data, int depth) {
      if (src == nullptr || goal == nullptr) {
          return false;
      }
+
      while (q1.getSize() > 0 && q2.getSize() >0) {
          GNode* tmp1 = q1.front();
          GNode* tmp2 = q2.front();
