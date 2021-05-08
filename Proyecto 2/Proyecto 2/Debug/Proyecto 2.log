@@ -1,0 +1,30 @@
+﻿  Graph.cpp
+  Proyecto 2.cpp
+C:\Users\javie\Documents\7mo trimestre\Inteligencia\Proyecto 2\Proyecto 2\Graph.h(66,35): warning C4018: '<': signed/unsigned mismatch
+C:\Users\javie\Documents\7mo trimestre\Inteligencia\Proyecto 2\Proyecto 2\Graph.h(51): message : while compiling class template member function 'Graph<int>::GNode *Graph<int>::NBFS(T)'
+          with
+          [
+              T=int
+          ]
+C:\Users\javie\Documents\7mo trimestre\Inteligencia\Proyecto 2\Proyecto 2\Graph.h(392): message : see reference to function template instantiation 'Graph<int>::GNode *Graph<int>::NBFS(T)' being compiled
+          with
+          [
+              T=int
+          ]
+C:\Users\javie\Documents\7mo trimestre\Inteligencia\Proyecto 2\Proyecto 2\Proyecto 2.cpp(8): message : see reference to class template instantiation 'Graph<int>' being compiled
+C:\Users\javie\Documents\7mo trimestre\Inteligencia\Proyecto 2\Proyecto 2\Graph.h(153,27): warning C4018: '<': signed/unsigned mismatch
+C:\Users\javie\Documents\7mo trimestre\Inteligencia\Proyecto 2\Proyecto 2\Graph.h(140): message : while compiling class template member function 'void Graph<int>::print(void)'
+C:\Users\javie\Documents\7mo trimestre\Inteligencia\Proyecto 2\Proyecto 2\Graph.h(389): message : see reference to function template instantiation 'void Graph<int>::print(void)' being compiled
+C:\Users\javie\Documents\7mo trimestre\Inteligencia\Proyecto 2\Proyecto 2\Graph.h(132): message : while compiling class template member function 'Graph<int>::Graph(T)'
+          with
+          [
+              T=int
+          ]
+C:\Users\javie\Documents\7mo trimestre\Inteligencia\Proyecto 2\Proyecto 2\Proyecto 2.cpp(8): message : see reference to function template instantiation 'Graph<int>::Graph(T)' being compiled
+          with
+          [
+              T=int
+          ]
+C:\Users\javie\Documents\7mo trimestre\Inteligencia\Proyecto 2\Proyecto 2\Graph.h(158,35): warning C4018: '<': signed/unsigned mismatch
+  Generating Code...
+  Proyecto 2.vcxproj -> C:\Users\javie\Documents\7mo trimestre\Inteligencia\Proyecto 2\Debug\Proyecto 2.exe
