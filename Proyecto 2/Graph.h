@@ -92,19 +92,24 @@ public:
         Queue<GNode*> qVisited;
         GNode* tmp = s.front();
         while (tmp) {
+            
             if (tmp->data == data) {
                 setVisitedFalse(qVisited);
                 //tmp->visited = true;
+                
                 return tmp;
             }
             else {
                 s.pop();
+                cout << tmp->data << " " << endl;
                 for (int i = 0; i < tmp->children.size(); i++) {
                     if (!tmp->children[i]->visited) {
                         tmp->children[i]->visited = true;
                         s.push(tmp->children[i]);
                         qVisited.push(tmp->children[i]);
+                        
                     }
+                    //cout << tmp->children[i]->data << endl;
                 }
                 tmp = s.front();
             }
@@ -117,37 +122,44 @@ public:
         Stack<GNode*> s;
         s.push(root);
         Queue<GNode*> qVisited;
-
-        //float depth = 0;
-        //float limit = 2;
         GNode* tmp = s.front();
-        while (s.getSize() > 0) {
-            if (depth == 0) {
-
-                //cout << tmp->data << endl;
+        int counter = 0;
+        while (tmp) {
+            if (depth == counter) {
                 if (tmp->data == data) {
                     setVisitedFalse(qVisited);
-                    cout << "se encontro" << endl;
-                    cout << depth << endl;
+                    cout << "encontro" << endl;
+                    //tmp->visited = true;
+                    //counter = 0;
                     return tmp;
-                    //break;
-                }
-                else {
-                    return nullptr;
                 }
             }
-            else if (depth >= 0) {
-                cout << "si entro" << endl;
-                for (int i = 0; i < tmp->children.size(); i++) {
+            else {
+                //}
+                s.pop();
+                counter++;
+                cout << tmp->data << endl;
+                if (depth >= 0) {
+                    for (int i = 0; i < tmp->children.size(); i++) {
+                        if (!tmp->children[i]->visited) {
+                            tmp->children[i]->visited = true;
+                            s.push(tmp->children[i]);
+                            qVisited.push(tmp->children[i]);
+                            //counter++;
+                            //
+                            //cout << tmp->children[i]->data << endl;
+                        }
 
-                    limitedDFS(data, depth - 1);
-
+                    }
+                    tmp = s.front();
                 }
 
-                tmp = s.front();
+               
             }
-
+            
         }
+        
+        setVisitedFalse(qVisited);
         return nullptr;
     }
 };
@@ -180,7 +192,7 @@ void Graph<T>::print() {
     if (!root) {
         return;
     }
-    cout << nodeCount << endl;
+    //cout << nodeCount << endl;
     Queue<GNode*> q;
     Queue<GNode*> qVisited;
     q.push(root);
@@ -354,46 +366,20 @@ void Graph<T>::start() {
     insert(5, 8);
     insert(8, 4);
     insert(4, 2);
-    insert(3, 2);
-    /*insert(8, 3);
-    
-    insert(2, 1);
-    insert(1, 7);
-    insert(7, 8);
-    insert(8, 4);
-    insert(4, 1);
-    insert(5, 7);
-    insert(4, 5);
-    insert(1, 3);
-    insert(5, 3);
-    insert(1, 5);*/
-    
-    //deleteNode(3,2);
-    //deleteNode(7, 6);
-    
-    /*if (NDFS(4)) {
-        cout << "si esta\n";
+    insert(2, 3);
+    insert(5, 4);
+    insert(5, 9);
+    insert(3, 9);
+    insert(9, 7);
+    insert(7, 1);
+    insert(1, 6);
+    insert(6, 5);
+    if (limitedDFS(6,4)) {
+        cout << "si esta" << endl;
     }
     else {
-        cout << "nohay\n";
-    }*/
-    limitedDFS(4, 4);
-    print();
-    
-    //limitedDFS(7, 3);
-    if (NBFS(7)) {
-        cout << "si esta\n";
+        cout << "no esta" << endl;
     }
-    else {
-        cout << "nohay\n";
-    }
-    if (biderectionalBFS(5, 2)) {
-        cout << "hay camino" << endl;
-    }
-    else {
-        cout << "no hay camino" << endl;
-    }
-    
 }
 
 
