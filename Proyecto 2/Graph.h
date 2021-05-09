@@ -20,6 +20,7 @@ private:
         T data;
         bool visited = false;
         bool deQueue = false;
+        int level = 0;
         VectorJ<GNode*> children;
     public:
         GNode() {}
@@ -118,47 +119,41 @@ public:
         return nullptr;
     }
     GNode* limitedDFS(T data, int depth) {
-        root->visited = true;
+        
         Stack<GNode*> s;
         s.push(root);
+        root->visited = true;
+        root->level = 0;
         Queue<GNode*> qVisited;
         GNode* tmp = s.front();
         int counter = 0;
         while (tmp) {
-            if (depth == counter) {
-                if (tmp->data == data) {
+
+            if (tmp->data == data) {
+                if (tmp->level <= depth) {
                     setVisitedFalse(qVisited);
-                    cout << "encontro" << endl;
-                    //tmp->visited = true;
-                    //counter = 0;
+                    cout << tmp->level << endl;
                     return tmp;
                 }
+                //break;
             }
+
             else {
-                //}
                 s.pop();
-                counter++;
-                cout << tmp->data << endl;
                 if (depth >= 0) {
                     for (int i = 0; i < tmp->children.size(); i++) {
                         if (!tmp->children[i]->visited) {
                             tmp->children[i]->visited = true;
                             s.push(tmp->children[i]);
                             qVisited.push(tmp->children[i]);
-                            //counter++;
-                            //
-                            //cout << tmp->children[i]->data << endl;
+                            tmp->children[i]->level = tmp->level + 1;
+                            cout << " " << tmp->children[i]->data << " esta en el nivel " << "-->" << tmp->children[i]->level << endl;
                         }
-
                     }
                     tmp = s.front();
                 }
-
-               
             }
-            
         }
-        
         setVisitedFalse(qVisited);
         return nullptr;
     }
@@ -196,6 +191,7 @@ void Graph<T>::print() {
     Queue<GNode*> q;
     Queue<GNode*> qVisited;
     q.push(root);
+    int counter = 0;
     while (q.front())
     {
         GNode* tmp = q.front();
@@ -208,6 +204,7 @@ void Graph<T>::print() {
                 vectorTmp[i]->visited = true;
                 for (int i = 2; i < tmp->children.size() - 1; i++)
                     cout << ",";
+                
             }
             cout << vectorTmp[i]->data << ",";
         }
@@ -374,7 +371,9 @@ void Graph<T>::start() {
     insert(7, 1);
     insert(1, 6);
     insert(6, 5);
-    if (limitedDFS(6,4)) {
+    insert(7, 10);
+    print();
+    if (limitedDFS(9,4)) {
         cout << "si esta" << endl;
     }
     else {
