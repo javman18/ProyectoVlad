@@ -21,6 +21,7 @@ private:
         bool visited = false;
         bool deQueue = false;
         int level = 0;
+        long long int path = 0;
         VectorJ<GNode*> children;
     public:
         GNode() {}
@@ -41,7 +42,7 @@ public:
     void setVisitedFalse(Queue<GNode*> qV);
     void deleteNode(T parent, T data);
     void iterativeDFS(T data);
-    
+    void dijkstra(T src, T goal);
     //int intersect(bool a, bool b);
     bool biderectionalBFS(T data1, T data2);
     void start();
@@ -300,61 +301,88 @@ void Graph<T>::iterativeDFS(T data) {
      Queue<GNode*> q2;
      q2.push(goal);
      goal->visited = true;
-     Queue<GNode*> qVisited1;
-     Queue<GNode*> qVisited2;
-     GNode* intersectNode = nullptr;
      if (src == nullptr || goal == nullptr) {
          return false;
      }
-
-     while (q1.getSize() > 0 && q2.getSize() >0) {
-         GNode* tmp1 = q1.front();
-         GNode* tmp2 = q2.front();
-         cout << tmp1->data << endl;
-         if (tmp1->visited && tmp2->visited) {
-             //cout << tmp2->data << endl;
-             //cout << intersect << endl;
-             return true;
+     while (q1.getSize() > 0 && q2.getSize() > 0) {
+         src = q1.front();
+         q1.pop();
+         for (int i = 0; i < src->children.size(); i++) {
+             if (goal == src->children[i]) {
+                 return true;
+             }
+             if (!src->children[i]->visited ) {
+                 src->children[i]->visited = true;
+                 q1.push(src->children[i]);
+                // qVisited.push(src->children[i]);
+             }
          }
-         
-         
-         //if (tmp1->visited && tmp2->visited) {
-         //    setVisitedFalse(qVisited1);
-         //    setVisitedFalse(qVisited2);
-         //    cout << "encontrado: " << tmp1->data << endl;
-         //    cout << "encontrado: " << tmp2->data << endl;
-         //    
-         //    return;
-         //    //break;
-         //}
-         //else {
-         //    for (int i = 0; i < tmp1->children.size(); i++) {
-         //        if (!tmp1->children[i]->visited) {
-         //            tmp1->children[i]->visited = true;
-         //            q1.push(tmp1->children[i]);
-         //            qVisited1.push(tmp1->children[i]);
-         //        }
-
-         //    }
-         //    q1.pop();
-         //    tmp1 = q1.front();
-         //    for (int i = 0; i < tmp2->children.size(); i++) {
-         //        if (!tmp2->children[i]->visited) {
-         //            tmp2->children[i]->visited = true;
-         //            q2.push(tmp2->children[i]);
-         //            qVisited2.push(tmp2->children[i]);
-         //        }
-
-         //    }
-         //    q2.pop();
-         //    tmp2 = q2.front();
-         //}
      }
      return false;
-     //cout << "queue 1: "<<q1.front()->data << endl;
-     //cout << "queue 2: "<<q2.front()->data << endl;
+     //GNode* src = NBFS(data1);
+     //GNode* goal = NBFS(data2);
+     //Queue<GNode*> q1;
+     //q1.push(src);
+     //src->visited = true;
+     //Queue<GNode*> q2;
+     //q2.push(goal);
+     //goal->visited = true;
+     //Queue<GNode*> qVisited1;
+     //Queue<GNode*> qVisited2;
+     //GNode* intersectNode = nullptr;
+     //if (src == nullptr || goal == nullptr) {
+     //    return false;
+     //}
+
+     //while (q1.getSize() > 0 && q2.getSize() >0) {
+     //    GNode* tmp1 = q1.front();
+     //    GNode* tmp2 = q2.front();
+     //    cout << tmp1->data << endl;
+     //    if (tmp1->visited && tmp2->visited) {
+     //        //cout << tmp2->data << endl;
+     //        //cout << intersect << endl;
+     //        return true;
+     //    }
+     //}
+     //return false;
+     ////cout << "queue 1: "<<q1.front()->data << endl;
+     ////cout << "queue 2: "<<q2.front()->data << endl;
  }
 
+
+ template<class T>
+ void Graph<T>::dijkstra(T src, T goal) {
+     root->visited = true;
+     root->deQueue = false;
+     root->path = 0;
+     Queue<GNode*> q;
+     q.push(root);
+     Queue<GNode*> qVisited;
+     GNode* tmp = q.front();
+     while (tmp) {
+         if (tmp->data == src) {
+             setVisitedFalse(qVisited);
+             tmp->deQueue = true;
+             //tmp->visited = true;
+            
+         }
+         else {
+             for (int i = 0; i < tmp->children.size(); i++) {
+                 if (!tmp->children[i]->visited) {
+                     tmp->children[i]->visited = true;
+                     tmp->children[i]->path == 99999;
+                     q.push(tmp->children[i]);
+                     qVisited.push(tmp->children[i]);
+                 }
+
+             }
+             q.pop();
+             tmp = q.front();
+         }
+     }
+     setVisitedFalse(qVisited);
+     
+ }
 /**
 * @brief inicia las funciones
 */
@@ -373,11 +401,17 @@ void Graph<T>::start() {
     insert(6, 5);
     insert(7, 10);
     print();
-    if (limitedDFS(9,4)) {
+    if (limitedDFS(4,2)) {
         cout << "si esta" << endl;
     }
     else {
         cout << "no esta" << endl;
+    }
+    if (biderectionalBFS(7, 10)) {
+        cout << "hay camino" << endl;
+    }
+    else {
+        cout << "no hay camino" << endl;
     }
 }
 
