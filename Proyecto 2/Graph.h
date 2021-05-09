@@ -21,6 +21,7 @@ private:
         bool visited = false;
         bool deQueue = false;
         int level = 0;
+        int cost = 0;
         long long int path = 0;
         VectorJ<GNode*> children;
     public:
@@ -301,52 +302,27 @@ void Graph<T>::iterativeDFS(T data) {
      Queue<GNode*> q2;
      q2.push(goal);
      goal->visited = true;
+     int intersect = -1;
      if (src == nullptr || goal == nullptr) {
          return false;
      }
      while (q1.getSize() > 0 && q2.getSize() > 0) {
-         src = q1.front();
+         GNode* tmp = q1.front();
+         GNode* tmp2 = q2.front();
          q1.pop();
-         for (int i = 0; i < src->children.size(); i++) {
-             if (goal == src->children[i]) {
+        
+         for (int i = 0; i < nodeCount; i++) {
+             
+             if (tmp->visited && tmp2->visited) {
+                 intersect = i;
+                 cout << intersect << endl;
                  return true;
              }
-             if (!src->children[i]->visited ) {
-                 src->children[i]->visited = true;
-                 q1.push(src->children[i]);
-                // qVisited.push(src->children[i]);
-             }
+             
          }
      }
      return false;
-     //GNode* src = NBFS(data1);
-     //GNode* goal = NBFS(data2);
-     //Queue<GNode*> q1;
-     //q1.push(src);
-     //src->visited = true;
-     //Queue<GNode*> q2;
-     //q2.push(goal);
-     //goal->visited = true;
-     //Queue<GNode*> qVisited1;
-     //Queue<GNode*> qVisited2;
-     //GNode* intersectNode = nullptr;
-     //if (src == nullptr || goal == nullptr) {
-     //    return false;
-     //}
-
-     //while (q1.getSize() > 0 && q2.getSize() >0) {
-     //    GNode* tmp1 = q1.front();
-     //    GNode* tmp2 = q2.front();
-     //    cout << tmp1->data << endl;
-     //    if (tmp1->visited && tmp2->visited) {
-     //        //cout << tmp2->data << endl;
-     //        //cout << intersect << endl;
-     //        return true;
-     //    }
-     //}
-     //return false;
-     ////cout << "queue 1: "<<q1.front()->data << endl;
-     ////cout << "queue 2: "<<q2.front()->data << endl;
+     
  }
 
 
@@ -398,8 +374,9 @@ void Graph<T>::start() {
     insert(9, 7);
     insert(7, 1);
     insert(1, 6);
-    insert(6, 5);
+    insert(6, 4);
     insert(7, 10);
+    
     print();
     if (limitedDFS(4,2)) {
         cout << "si esta" << endl;
@@ -407,7 +384,7 @@ void Graph<T>::start() {
     else {
         cout << "no esta" << endl;
     }
-    if (biderectionalBFS(7, 10)) {
+    if (biderectionalBFS(6, 3)) {
         cout << "hay camino" << endl;
     }
     else {
