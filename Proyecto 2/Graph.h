@@ -22,10 +22,12 @@ private:
         bool deQueue = false;
         int level = 0;
         int cost = 0;
-        long long int path;
+        int path= 0;
+        
         VectorJ<GNode*> children;
         VectorJ<int>dist;
         VectorJ<int> costs;
+        GNode* parent;
     public:
         GNode() {}
         GNode(T d) {
@@ -37,6 +39,7 @@ private:
 public:
     GNode* root = nullptr;
     int nodeCount = 0;
+    int infinite = 9999;
     Graph() {}
     Graph(T data);
     Graph(Graph& gr2);
@@ -72,7 +75,7 @@ public:
                 for (int i = 0; i < tmp->children.size(); i++) {
                     if (!tmp->children[i]->visited) {
                         tmp->children[i]->visited = true;
-                        tmp->children[i]->path = 9999;
+                        tmp->children[i]->path = infinite;
                         
                         q.push(tmp->children[i]);
                         qVisited.push(tmp->children[i]);
@@ -340,8 +343,6 @@ void Graph<T>::iterativeDFS(T data) {
      GNode* start = NBFS(src);
      GNode* end = NBFS(goal);
      Queue<GNode*> q;
-     
-     
      start->path = 0;
      start->visited = true;
      q.push(start);
@@ -363,7 +364,9 @@ void Graph<T>::iterativeDFS(T data) {
                      
                      tmp->children[i]->visited = true;
                      tmp->children[i]->path = tmp->path + tmp->costs[i];
-                     cout << tmp->children[i]->data << " camino = " << tmp->children[i]->path << endl;
+                     tmp->children[i]->parent = tmp;
+                     cout << tmp->children[i]->data << " camino mas corto tiene valor de " << tmp->children[i]->path << endl;
+                     cout << tmp->children[i]->data << " es hijo de: " << tmp->children[i]->parent->data << endl;
                      q.push(tmp->children[i]);
                      qVisited.push(tmp->children[i]);
                  }
@@ -393,6 +396,8 @@ void Graph<T>::start() {
     insert(6, 4, 8);
     insert(7, 10, 6);
     insert(5, 7, 6);
+    insert(1, 10, 1);
+    insert(8, 7, 5);
     
     print();
     if (limitedDFS(4,2)) {
