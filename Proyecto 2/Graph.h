@@ -22,8 +22,10 @@ private:
         bool deQueue = false;
         int level = 0;
         int cost = 0;
-        long long int path = 0;
+        long long int path;
         VectorJ<GNode*> children;
+        VectorJ<int>dist;
+        VectorJ<int> costs;
     public:
         GNode() {}
         GNode(T d) {
@@ -38,7 +40,7 @@ public:
     Graph() {}
     Graph(T data);
     Graph(Graph& gr2);
-    void insert(T parent, T newData);
+    void insert(T parent, T newData, int c);
     void print();
     void setVisitedFalse(Queue<GNode*> qV);
     void deleteNode(T parent, T data);
@@ -70,6 +72,8 @@ public:
                 for (int i = 0; i < tmp->children.size(); i++) {
                     if (!tmp->children[i]->visited) {
                         tmp->children[i]->visited = true;
+                        tmp->children[i]->path = 9999;
+                        
                         q.push(tmp->children[i]);
                         qVisited.push(tmp->children[i]);
                     }
@@ -209,6 +213,10 @@ void Graph<T>::print() {
                 
             }
             cout << vectorTmp[i]->data << ",";
+            
+        }
+        for (int i = 0; i < tmp->costs.size(); i++) {
+            cout << tmp->costs[i];
         }
         q.pop();
         cout << "}\n";
@@ -232,19 +240,20 @@ void Graph<T>::setVisitedFalse(Queue<GNode*> qV) {
 * @brief inserta un nodo en el parent si este existe y si existe el param newData lo declara como el nuevo hijo
 */
 template <class T>
-void Graph<T>::insert(T parent, T newData) {
+void Graph<T>::insert(T parent, T newData, int c) {
 
     GNode* tmp = NBFS(parent);
     if (tmp) {
         GNode* tmp2 = NBFS(newData);
         if (tmp2) {
             tmp->children.push_back(tmp2);
+            tmp->costs.push_back(c);
         }
         else {
             tmp->children.push_back(new GNode(newData));
+            tmp->costs.push_back(c);
             nodeCount++;
-        }
-        
+        } 
     }
 }
 
@@ -309,7 +318,7 @@ void Graph<T>::iterativeDFS(T data) {
      while (q1.getSize() > 0 && q2.getSize() > 0) {
          GNode* tmp = q1.front();
          GNode* tmp2 = q2.front();
-         q1.pop();
+         
         
          for (int i = 0; i < nodeCount; i++) {
              
@@ -328,31 +337,38 @@ void Graph<T>::iterativeDFS(T data) {
 
  template<class T>
  void Graph<T>::dijkstra(T src, T goal) {
-     root->visited = true;
-     root->deQueue = false;
-     root->path = 0;
+     GNode* start = NBFS(src);
+     GNode* end = NBFS(goal);
      Queue<GNode*> q;
-     q.push(root);
+     
+     
+     start->path = 0;
+     start->visited = true;
+     q.push(start);
      Queue<GNode*> qVisited;
-     GNode* tmp = q.front();
-     while (tmp) {
-         if (tmp->data == src) {
+     
+     while (q.getSize()>0) {
+         GNode* tmp = q.front();
+         q.pop();
+         if (tmp->data == goal) {
+             
              setVisitedFalse(qVisited);
-             tmp->deQueue = true;
-             //tmp->visited = true;
-            
+             return;
          }
          else {
+             
              for (int i = 0; i < tmp->children.size(); i++) {
-                 if (!tmp->children[i]->visited) {
+                 
+                 if (!tmp->children[i]->visited && (tmp->path + tmp->costs[i] < tmp->children[i]->path)) {
+                     
                      tmp->children[i]->visited = true;
-                     tmp->children[i]->path == 99999;
+                     tmp->children[i]->path = tmp->path + tmp->costs[i];
+                     cout << tmp->children[i]->data << " camino = " << tmp->children[i]->path << endl;
                      q.push(tmp->children[i]);
                      qVisited.push(tmp->children[i]);
                  }
-
              }
-             q.pop();
+             
              tmp = q.front();
          }
      }
@@ -364,18 +380,19 @@ void Graph<T>::iterativeDFS(T data) {
 */
 template <class T>
 void Graph<T>::start() {
-    insert(5, 8);
-    insert(8, 4);
-    insert(4, 2);
-    insert(2, 3);
-    insert(5, 4);
-    insert(5, 9);
-    insert(3, 9);
-    insert(9, 7);
-    insert(7, 1);
-    insert(1, 6);
-    insert(6, 4);
-    insert(7, 10);
+    insert(5, 8, 4);
+    insert(8, 4, 3);
+    insert(4, 2, 5);
+    insert(2, 3, 3);
+    insert(5, 4, 8);
+    insert(5, 9, 5);
+    insert(3, 9, 9);
+    insert(9, 7, 7);
+    insert(7, 1, 2);
+    insert(1, 6, 2);
+    insert(6, 4, 8);
+    insert(7, 10, 6);
+    insert(5, 7, 6);
     
     print();
     if (limitedDFS(4,2)) {
@@ -390,6 +407,8 @@ void Graph<T>::start() {
     else {
         cout << "no hay camino" << endl;
     }
+    dijkstra(5, 2);
+    
 }
 
 
