@@ -30,4 +30,8 @@
 *.exe
 *.out
 *.app
+<<<<<<< HEAD
 *.vs
+=======
+*.vs/
+>>>>>>> BusquedaJavi
