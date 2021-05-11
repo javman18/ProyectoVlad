@@ -48,7 +48,7 @@ public:
     void setVisitedFalse(Queue<GNode*> qV);
     void deleteNode(T parent, T data);
     void iterativeDFS(T data);
-    void dijkstra(T src, T goal);
+    int dijkstra(T src, T goal);
     //int intersect(bool a, bool b);
     bool biderectionalBFS(T data1, T data2);
     void start();
@@ -153,10 +153,11 @@ public:
                     for (int i = 0; i < tmp->children.size(); i++) {
                         if (!tmp->children[i]->visited) {
                             tmp->children[i]->visited = true;
+                            
+                            tmp->children[i]->level = tmp->level + 1;
+                            cout << " " << tmp->children[i]->data << " esta en el nivel -->" << tmp->children[i]->level << endl;
                             s.push(tmp->children[i]);
                             qVisited.push(tmp->children[i]);
-                            tmp->children[i]->level = tmp->level + 1;
-                            cout << " " << tmp->children[i]->data << " esta en el nivel " << "-->" << tmp->children[i]->level << endl;
                         }
                     }
                     tmp = s.front();
@@ -314,6 +315,8 @@ void Graph<T>::iterativeDFS(T data) {
      Queue<GNode*> q2;
      q2.push(goal);
      goal->visited = true;
+     Queue<GNode*> qVisited1;
+     Queue<GNode*> qVisited2;
      int intersect = -1;
      if (src == nullptr || goal == nullptr) {
          return false;
@@ -321,27 +324,60 @@ void Graph<T>::iterativeDFS(T data) {
      while (q1.getSize() > 0 && q2.getSize() > 0) {
          GNode* tmp = q1.front();
          GNode* tmp2 = q2.front();
-         
+         for (int i = 0; i < tmp->children.size(); i++) {
+             if (!tmp->children[i]->visited) {
+                 tmp->children[i]->visited = true;
+                 tmp->children[i]->path = infinite;
+
+                 q1.push(tmp->children[i]);
+                 qVisited1.push(tmp->children[i]);
+             }
+
+         }
+         q1.pop();
+         tmp = q1.front();
+         for (int i = 0; i < tmp2->children.size(); i++) {
+             if (!tmp2->children[i]->visited) {
+                 tmp2->children[i]->visited = true;
+                 tmp2->children[i]->path = infinite;
+
+                 q2.push(tmp2->children[i]);
+                 qVisited2.push(tmp2->children[i]);
+             }
+
+         }
+         q2.pop();
+         tmp2 = q2.front();
         
          for (int i = 0; i < nodeCount; i++) {
              
              if (tmp->visited && tmp2->visited) {
                  intersect = i;
+                 setVisitedFalse(qVisited1);
+                 setVisitedFalse(qVisited2);
                  cout << intersect << endl;
                  return true;
              }
              
          }
      }
+     setVisitedFalse(qVisited1);
+     setVisitedFalse(qVisited2);
      return false;
      
  }
 
-
+ /*
+* @param src: dato del nodo de inicio
+* @param goal: dato del nodo final
+* @brief elige el camino mas economico hacia el objetivo, inicializando al inicio con un costo de 0 y
+* los demas en infinito.
+*/
  template<class T>
- void Graph<T>::dijkstra(T src, T goal) {
+ int Graph<T>::dijkstra(T src, T goal) {
      GNode* start = NBFS(src);
      GNode* end = NBFS(goal);
+     //cout << end->data;
      Queue<GNode*> q;
      start->path = 0;
      start->visited = true;
@@ -350,11 +386,14 @@ void Graph<T>::iterativeDFS(T data) {
      
      while (q.getSize()>0) {
          GNode* tmp = q.front();
-         q.pop();
-         if (tmp->data == goal) {
+        
+         if (tmp->data == end->data) {
              
              setVisitedFalse(qVisited);
-             return;
+             
+             cout << tmp->data << " camino mas corto desde " << start->data << " tiene valor de " << tmp->path << endl;
+             
+             return tmp->path;
          }
          else {
              
@@ -365,13 +404,13 @@ void Graph<T>::iterativeDFS(T data) {
                      tmp->children[i]->visited = true;
                      tmp->children[i]->path = tmp->path + tmp->costs[i];
                      tmp->children[i]->parent = tmp;
-                     cout << tmp->children[i]->data << " camino mas corto tiene valor de " << tmp->children[i]->path << endl;
+                     
                      cout << tmp->children[i]->data << " es hijo de: " << tmp->children[i]->parent->data << endl;
                      q.push(tmp->children[i]);
                      qVisited.push(tmp->children[i]);
                  }
              }
-             
+             q.pop();
              tmp = q.front();
          }
      }
@@ -386,11 +425,10 @@ void Graph<T>::start() {
     insert(5, 8, 4);
     insert(8, 4, 3);
     insert(4, 2, 5);
-    insert(2, 3, 3);
     insert(5, 4, 8);
     insert(5, 9, 5);
-    insert(3, 9, 9);
     insert(9, 7, 7);
+    insert(2, 9, 6);
     insert(7, 1, 2);
     insert(1, 6, 2);
     insert(6, 4, 8);
@@ -400,19 +438,27 @@ void Graph<T>::start() {
     insert(8, 7, 5);
     
     print();
+    if (NBFS(2)) {
+        cout << "si esta" << endl;
+    }
+    else {
+        cout << "no esta" << endl;
+    }
+    
     if (limitedDFS(4,2)) {
         cout << "si esta" << endl;
     }
     else {
         cout << "no esta" << endl;
     }
-    if (biderectionalBFS(6, 3)) {
+    dijkstra(4, 7);
+    /*if (biderectionalBFS(6,2)) {
         cout << "hay camino" << endl;
     }
     else {
         cout << "no hay camino" << endl;
-    }
-    dijkstra(5, 2);
+    }*/
+    //dijkstra(4, 2);
     
 }
 

@@ -1,4 +1,5 @@
 ﻿  Graph.cpp
   Proyecto 2.cpp
   Generating Code...
+C:\Users\javie\Documents\7mo trimestre\Inteligencia\proyectoVlad\ProyectoVlad\Proyecto 2\Graph.h(419): warning C4715: 'Graph<int>::dijkstra': not all control paths return a value
   Proyecto 2.vcxproj -> C:\Users\javie\Documents\7mo trimestre\Inteligencia\proyectoVlad\ProyectoVlad\x64\Debug\Proyecto 2.exe
