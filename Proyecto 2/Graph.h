@@ -49,6 +49,8 @@ public:
     void deleteNode(T parent, T data);
     void iterativeDFS(T data);
     int dijkstra(T src, T goal);
+    int heuristic(GNode* src, GNode* goal);
+    int aStar(T src, T goal);
     //int intersect(bool a, bool b);
     bool biderectionalBFS(T data1, T data2);
     void start();
@@ -111,7 +113,7 @@ public:
             }
             else {
                 s.pop();
-                cout << tmp->data << " " << endl;
+                
                 for (int i = 0; i < tmp->children.size(); i++) {
                     if (!tmp->children[i]->visited) {
                         tmp->children[i]->visited = true;
@@ -141,8 +143,12 @@ public:
             if (tmp->data == data) {
                 if (tmp->level <= depth) {
                     setVisitedFalse(qVisited);
-                    cout << tmp->level << endl;
+                    
                     return tmp;
+                }
+                else {
+                    cout << "muy poca profundidad" << endl;
+                    break;
                 }
                 //break;
             }
@@ -308,13 +314,14 @@ void Graph<T>::iterativeDFS(T data) {
  template <class T>
  bool Graph<T>::biderectionalBFS(T data1, T data2) {
      GNode* src = NBFS(data1);
-     GNode* goal = NBFS(data2);
+     GNode* goal = NBFS(data2); 
+     //goal->visited = true;
      Queue<GNode*> q1;
      q1.push(src);
      src->visited = true;
      Queue<GNode*> q2;
      q2.push(goal);
-     goal->visited = true;
+     
      Queue<GNode*> qVisited1;
      Queue<GNode*> qVisited2;
      int intersect = -1;
@@ -358,6 +365,10 @@ void Graph<T>::iterativeDFS(T data) {
                  cout << intersect << endl;
                  return true;
              }
+             else
+             {
+                 return false;
+             }
              
          }
      }
@@ -373,12 +384,13 @@ void Graph<T>::iterativeDFS(T data) {
 * @brief elige el camino mas economico hacia el objetivo, inicializando al inicio con un costo de 0 y
 * los demas en infinito.
 */
- template<class T>
+ template <class T>
  int Graph<T>::dijkstra(T src, T goal) {
      GNode* start = NBFS(src);
      GNode* end = NBFS(goal);
      //cout << end->data;
      Queue<GNode*> q;
+     start->parent = nullptr;
      start->path = 0;
      start->visited = true;
      q.push(start);
@@ -405,9 +417,10 @@ void Graph<T>::iterativeDFS(T data) {
                      tmp->children[i]->path = tmp->path + tmp->costs[i];
                      tmp->children[i]->parent = tmp;
                      
-                     cout << tmp->children[i]->data << " es hijo de: " << tmp->children[i]->parent->data << endl;
+                     cout << tmp->children[i]->data << " es hijo de: " << tmp->children[i]->parent->data <<" con valor de "<< tmp->costs[i] << endl;
                      q.push(tmp->children[i]);
                      qVisited.push(tmp->children[i]);
+                     qVisited.push(tmp);
                  }
              }
              q.pop();
@@ -416,6 +429,57 @@ void Graph<T>::iterativeDFS(T data) {
      }
      setVisitedFalse(qVisited);
      
+ }
+
+ template <class T>
+ int Graph<T>::heuristic(GNode* src, GNode* goal) {
+     
+ }
+ template <class T>
+ int Graph<T>::aStar(T src, T goal) {
+     GNode* start = NBFS(src);
+     GNode* end = NBFS(goal);
+     //cout << end->data;
+     Queue<GNode*> q;
+     start->parent = nullptr;
+     start->path = 0;
+     start->visited = true;
+     q.push(start);
+     Queue<GNode*> qVisited;
+
+     while (q.getSize() > 0) {
+         GNode* tmp = q.front();
+
+         if (tmp->data == end->data) {
+
+             setVisitedFalse(qVisited);
+
+             cout << tmp->data << " camino mas corto desde " << start->data << " tiene valor de " << tmp->path << endl;
+
+             return tmp->path;
+         }
+         else {
+
+             for (int i = 0; i < tmp->children.size(); i++) {
+
+                 if (!tmp->children[i]->visited && (tmp->path + tmp->costs[i] < tmp->children[i]->path)) {
+
+                     tmp->children[i]->visited = true;
+                     tmp->children[i]->path = tmp->path + heuristic(tmp->children[i], end);
+                     tmp->children[i]->parent = tmp;
+
+                     cout << tmp->children[i]->data << " es hijo de: " << tmp->children[i]->parent->data << " con valor de " << tmp->costs[i] << endl;
+                     q.push(tmp->children[i]);
+                     qVisited.push(tmp->children[i]);
+                     qVisited.push(tmp);
+                 }
+             }
+             q.pop();
+             tmp = q.front();
+         }
+     }
+     setVisitedFalse(qVisited);
+
  }
 /**
 * @brief inicia las funciones
@@ -436,28 +500,47 @@ void Graph<T>::start() {
     insert(5, 7, 6);
     insert(1, 10, 1);
     insert(8, 7, 5);
+    //insert(2, 7, 1);
+    
     
     print();
-    if (NBFS(2)) {
+    
+    cout << "BREATH FIRST SEARCH" << endl;
+    GNode* BFS = NBFS(2);
+    if (BFS) {
+        cout << "si esta " <<BFS->data<< endl;
+    }
+    else {
+        cout << "no esta" << endl;
+    }
+
+    cout << "DEEP FIRST SEARCH" << endl;
+    GNode* DFS = NDFS(6);
+    if (DFS) {
+        cout << "si esta " << DFS->data << endl;
+    }
+    else {
+        cout << "no esta" << endl;
+    }
+
+    cout << "LIMITED SEARCH" << endl;
+    if (limitedDFS(6,1)) {
         cout << "si esta" << endl;
     }
     else {
         cout << "no esta" << endl;
     }
     
-    if (limitedDFS(4,2)) {
-        cout << "si esta" << endl;
-    }
-    else {
-        cout << "no esta" << endl;
-    }
-    dijkstra(4, 7);
-    /*if (biderectionalBFS(6,2)) {
+    cout << "BIDIRECTIONAL SEARCH" << endl;
+    if (biderectionalBFS(6,2)) {
         cout << "hay camino" << endl;
     }
     else {
         cout << "no hay camino" << endl;
-    }*/
+    }
+
+    cout << "DIJKSTRA" << endl;
+    cout<<dijkstra(4, 7)<<endl;
     //dijkstra(4, 2);
     
 }
