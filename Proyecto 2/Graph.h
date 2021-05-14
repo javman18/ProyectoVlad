@@ -4,6 +4,7 @@
 #include "Queue.h"
 #include "Stack.h"
 #include <string>
+
 /*
 * @class Graph
 * @atribute root: raiz del grafo
@@ -20,6 +21,7 @@ private:
         T data;
         bool visited = false;
         bool deQueue = false;
+        bool smell = true;
         int level = 0;
         int cost = 0;
         int path= 0;
@@ -45,7 +47,7 @@ public:
     Graph(Graph& gr2);
     void insert(T parent, T newData, int c);
     void print();
-    void setVisitedFalse(Queue<GNode*> qV);
+    static void setVisitedFalse(Queue<GNode*> qV);
     void deleteNode(T parent, T data);
     void iterativeDFS(T data);
     int dijkstra(T src, T goal);
@@ -53,7 +55,96 @@ public:
     int aStar(T src, T goal);
     //int intersect(bool a, bool b);
     bool biderectionalBFS(T data1, T data2);
+    static std::string GetAroma(int i) {
+        if (i < 4) {
+            return "Huele mal. Por aqui no\n";
+        }
+        else if (i < 7) {
+            return "Huele normal. Avanzando\n";
+        }
+        else {
+            return "Huele bien. Avanzando\n";
+        }
+    }
+
+    static GNode* HBHambre(GNode* begin) {
+        std::cout << "Buscando comida\n";
+        begin->visited = true;
+        begin->deQueue = false;
+        Queue<GNode*> q;
+        q.push(begin);
+        Queue<GNode*> qVisited;
+        GNode* tmp = q.front();
+        qVisited.push(tmp);
+        while (tmp->children.size()) {
+            for (int i = 0; i < tmp->children.size(); i++) {
+                if (!tmp->children[i]->visited) {
+                    tmp->children[i]->visited = true;
+                    std::cout << GetAroma(tmp->children[i]->data);
+                    if (tmp->children[i]->data > 3) {
+                        if (tmp->children[i]->data == 10) {
+                            setVisitedFalse(qVisited);
+                            std::cout << "Se encontro la comida\n";
+                            return tmp->children[i];
+                        }
+                        q.push(tmp->children[i]);
+                        qVisited.push(tmp->children[i]);
+                    }
+                }
+
+            }
+            q.pop();
+            tmp = q.front();
+        }
+        setVisitedFalse(qVisited);
+        std::cout << "No se encontro la comida\n";
+        return nullptr;
+    }
+    static GNode* HBHambreMemoria(GNode* begin) {
+        std::cout << "Buscando comida\n";
+        begin->visited = true;
+        begin->deQueue = false;
+        Queue<GNode*> q;
+        q.push(begin);
+        Queue<GNode*> qVisited;
+        GNode* tmp = q.front();
+        qVisited.push(tmp);
+        GNode* lastNode = nullptr;
+        while (tmp->children.size()) {
+            for (int i = 0; i < tmp->children.size(); i++) {
+                if (tmp->children[i]->smell) {
+                    tmp->children[i]->visited = true;
+                    std::cout << GetAroma(tmp->children[i]->data);
+                    if (tmp->children[i]->data > 3) {
+                        q.push(tmp->children[i]);
+                        qVisited.push(tmp->children[i]);
+                        if (tmp->children[i]->data == 10) {
+                            setVisitedFalse(qVisited);
+                            std::cout << "Se encontro el la comida\n";
+                            return tmp->children[i];
+                        }
+                    }
+                    else {
+                        tmp->children[i]->smell = false;
+                        if (tmp->children.size()-1 == i) {
+                            q.push(lastNode);
+                        }
+                    }
+                    
+                }
+
+            }
+            lastNode = q.back();
+            q.pop();
+            tmp = q.front();
+        }
+        setVisitedFalse(qVisited);
+        std::cout << "No se encontro la comida\n";
+        return nullptr;
+    }
+
     void start();
+    
     /*
     * @param data: dato del nodo a buscar
     * @brief busca un nodo a travez de BFS (amplitud)
@@ -172,6 +263,42 @@ public:
         }
         setVisitedFalse(qVisited);
         return nullptr;
+    }
+
+    GNode* iterariveDFS(T data) {
+        GNode* r = nullptr;
+        int profundidad = 1;
+        while (true) {
+
+            r = limitedDFS(data,profundidad);
+            if(r)
+                if (r->data == data) {
+                    return r;
+                }
+            profundidad++;
+        }
+    }
+
+    T getMaxHillClimping() {
+        T data = 0;
+        T lastData = 0;
+        GNode* r = nullptr;
+        int nCheck = 0;
+        while (true) {
+
+            r = NDFS(data);
+            if (r) {
+                nCheck = 0;
+                lastData = r->data;
+            }
+            else {
+                nCheck++;
+                if (nCheck > nodeCount) {
+                    return lastData;
+                }
+            }
+            data++;
+        }
     }
 };
 /*
@@ -515,7 +642,7 @@ void Graph<T>::start() {
     }
 
     cout << "DEEP FIRST SEARCH" << endl;
-    GNode* DFS = NDFS(6);
+    GNode* DFS = NDFS(10);
     if (DFS) {
         cout << "si esta " << DFS->data << endl;
     }
@@ -543,6 +670,20 @@ void Graph<T>::start() {
     cout<<dijkstra(4, 7)<<endl;
     //dijkstra(4, 2);
     
+    cout << "ITERATIVE SEARCH" << endl;
+    GNode* p = iterariveDFS(10);
+    cout << p->data << " encontrado.\n" << endl;
+
+    cout << "HEURISTIC SEARCH NORMAL" << endl;
+    HBHambre(root);
+    cout << "HEURISTIC SEARCH MEMORY 1" << endl;
+    HBHambreMemoria(root);
+    cout << "HEURISTIC SEARCH MEMORY 2" << endl;
+    HBHambreMemoria(root);
+
+    cout << "HILLCLIMPING" << endl;
+    cout << getMaxHillClimping() << endl;
+
 }
 
 
